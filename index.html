@@ -597,6 +597,12 @@ html.typing *{animation-play-state:paused!important;transition:none!important;ba
 #mentionBox[hidden]{display:none}
 #mentionBox button{display:block;width:100%;text-align:left;padding:9px 12px;border:0;background:none;font:inherit;color:inherit;cursor:pointer}
 #mentionBox button:hover,#mentionBox button.on{outline:2px solid #b9a5f0;outline-offset:-2px}
+#cmdBox{position:absolute;left:12px;right:12px;bottom:58px;max-height:220px;overflow:auto;background:#fff;color:#2b2f45;border:1px solid #d9cff5;border-radius:12px;box-shadow:0 10px 30px rgba(90,60,160,.25);z-index:6}
+#cmdBox[hidden]{display:none}
+#cmdBox button{display:block;width:100%;text-align:left;padding:9px 12px;border:0;background:none;font:inherit;color:inherit;cursor:pointer}
+#cmdBox button:hover,#cmdBox button.on{outline:2px solid #b9a5f0;outline-offset:-2px}
+#cmdBox b{display:block;font-size:14px;color:#5b3fa8}
+#cmdBox small{display:block;font-size:12px;color:#6b6f86;margin-top:2px;white-space:normal}
 /* Điện thoại: khung chat phủ kín, nền đặc để không thấy lớp dưới; cao theo vùng nhìn thấy khi bàn phím mở */
 @media (max-width:640px){#chat,#chat.big{background:#f7f5fd!important;opacity:1!important;top:0!important;bottom:0!important;left:0!important;right:0!important;height:100vh!important;height:100dvh!important;border-radius:0!important;border-width:0!important}}
 /* Điện thoại: khung chat đã phủ kín màn hình nên ẩn nút phóng to */
@@ -718,6 +724,7 @@ body:not(.light) .bcol h3{background:#1d2033}
 <details class="settings"><summary>Cài đặt</summary><div style="padding:6px 0"><button type="button" onclick="batThongBao()" style="border:0;border-radius:12px;padding:8px 12px;background:#7c5cff;color:#fff;font-weight:700;cursor:pointer">🔔 Bật thông báo</button></div><input type="checkbox" id="g3d" hidden><label class="sw"><input type="checkbox" id="thAuto"> Tự đổi sáng/tối theo giờ</label><label class="sw"><input type="checkbox" id="thLight"> Giao diện sáng (khi tắt tự đổi)</label><div class="tok"><button id="passClear" type="button">Xóa mật khẩu chat đã lưu</button><span id="passState"></span></div></details>
 <div id="passModal" hidden><div class="pm"><h3>Mật khẩu chat</h3><p>Nhập để trò chuyện với agent. Bỏ qua thì chỉ xem giao diện.</p><input type="password" id="pmIn" placeholder="Mật khẩu"><div class="pmb"><button id="pmSkip" type="button">Bỏ qua</button><button id="pmOk" type="button">Vào</button></div></div></div>
 <div id="chatBack"></div><div id="chat" hidden><img id="mascot" src="planet.png" alt="" hidden><header><img class="ava" id="chatAva" src="planet.png" alt="" title="Xem nhiệm vụ"><span id="chatTitle"></span><button id="chatZoom" type="button" title="Mở rộng" style="margin-right:6px;font-size:16px;line-height:1">⤢</button><button id="chatMore" type="button" title="Thêm" style="font-size:18px;line-height:1;padding:0 6px">⋯</button><button id="chatClose" type="button">Đóng</button></header><div id="chatMenu" hidden><button id="chatWipe" type="button" title="Xoá hết lịch sử và file của agent này">🗑 Xoá lịch sử</button></div><div class="log" id="chatLog"></div><div class="note" id="chatNote"></div><div id="replyBar" hidden></div><form id="chatForm"><label class="attach" title="Đính kèm file"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.4 11.1 12.2 20.3a6 6 0 0 1-8.5-8.5l9.2-9.2a4 4 0 0 1 5.7 5.7l-9.2 9.2a2 2 0 0 1-2.8-2.8l8.5-8.5"/></svg><input type="file" id="chatFile" accept="application/pdf,image/*,.csv,text/csv" multiple hidden></label><textarea id="chatIn" rows="1" placeholder="Nhắn cho agent..." autocomplete="off"></textarea><button type="submit">Gửi</button></form></div><div id="heads" class="heads"></div>
+<script src="lenh.js"></script>
 <script>
 var typingAt=0,typingT=0,planetDraw=()=>{};
 (function(){
@@ -1650,7 +1657,7 @@ function openChat(a){
   // Nhớ vị trí trang ngay khi mở chat (trước khi khung chat hiện ra), để lúc đóng trang quay lại đúng chỗ
   if($('chat').hidden)chatScrollY=window.scrollY;
   if(infoAgent){infoAgent=null;renderCols();}
-  chatA=a;touchThread(a.id);renderThreads();{const ct=$('chatTitle');ct.textContent=a.name;if(a.title||a.role){const cr=document.createElement('small');cr.className='ctRole';cr.textContent=a.title||a.role;ct.appendChild(cr);}}$('chat').hidden=false;$('chatLog').textContent='';$('chatNote').textContent='';delete lastSig[a.id];replyTo=null;showReply();$('chatIn').value=drafts[a.id]||'';$('chatIn').style.height='';pendingFiles=[];showPending();
+  chatA=a;hideCmd();touchThread(a.id);renderThreads();{const ct=$('chatTitle');ct.textContent=a.name;if(a.title||a.role){const cr=document.createElement('small');cr.className='ctRole';cr.textContent=a.title||a.role;ct.appendChild(cr);}}$('chat').hidden=false;$('chatLog').textContent='';$('chatNote').textContent='';delete lastSig[a.id];replyTo=null;showReply();$('chatIn').value=drafts[a.id]||'';$('chatIn').style.height='';pendingFiles=[];showPending();
   clearInterval(chatTimer);
   if(!pass){$('passModal').hidden=false;}
   if(!pass){$('chatForm').hidden=true;$('chatNote').textContent='Chưa có mật khẩu. Bấm lại dòng agent để nhập.';return;}
@@ -1826,6 +1833,13 @@ async function pumpQueue(){
 // Gõ @ để chọn agent: gợi ý tên, chọn xong thì tin được gửi sang agent đó
 const mBox=document.createElement('div');mBox.id='mentionBox';mBox.hidden=true;
 $('chat').appendChild(mBox);
+// Menu lệnh "/": chỉ hiện khi ô nhập bắt đầu bằng "/" và agent có lệnh trong lenh.js
+const cBox=document.createElement('div');cBox.id='cmdBox';cBox.hidden=true;
+$('chat').appendChild(cBox);
+let cIdx=0;
+function hideCmd(){cBox.hidden=true;cIdx=0;}
+function cmdHighlight(i){const n=cBox.children.length;if(!n)return;cIdx=((i%n)+n)%n;[...cBox.children].forEach((b,k)=>b.classList.toggle('on',k===cIdx));}
+function chonLenh(l){const t=$('chatIn');t.value=l.ten+' ';if(chatA)drafts[chatA.id]=t.value;hideCmd();t.focus();t.setSelectionRange(t.value.length,t.value.length);}
 const hideMention=()=>{mBox.hidden=true;};
 let mIdx=0;
 function mHighlight(i){const bs=[...mBox.children];if(!bs.length)return;mIdx=(i+bs.length)%bs.length;bs.forEach((b,k)=>{b.classList.toggle('on',k===mIdx);if(k===mIdx)b.scrollIntoView({block:'nearest'});});}
@@ -1874,6 +1888,24 @@ $('chatIn').addEventListener('keydown',e=>{
   else if(e.key==='ArrowUp'){e.preventDefault();mHighlight(mIdx-1);}
   else if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing){const b=mBox.children[mIdx];if(b){e.preventDefault();e.stopImmediatePropagation();b.click();}}
   else if(e.key==='Escape'){e.preventDefault();e.stopImmediatePropagation();hideMention();}
+});
+$('chatIn').addEventListener('input',()=>{
+  const ds=(chatA&&window.LENH)?window.LENH.locLenh(chatA.id,$('chatIn').value):[];
+  if(!ds.length){hideCmd();return;}
+  cBox.textContent='';
+  ds.forEach(l=>{const b=document.createElement('button');b.type='button';const t1=document.createElement('b');t1.textContent=l.ten;const t2=document.createElement('small');t2.textContent=l.mo_ta;b.append(t1,t2);
+    // Giữ con trỏ trong ô nhập khi bấm (không làm bàn phím điện thoại ẩn)
+    b.addEventListener('pointerdown',e=>e.preventDefault());b.addEventListener('mousedown',e=>e.preventDefault());
+    b.onclick=()=>chonLenh(l);cBox.appendChild(b);});
+  cBox.hidden=false;cmdHighlight(0);
+});
+// Mũi tên chọn lệnh, Enter chèn lệnh (không gửi), Esc đóng menu
+$('chatIn').addEventListener('keydown',e=>{
+  if(cBox.hidden)return;
+  if(e.key==='ArrowDown'){e.preventDefault();cmdHighlight(cIdx+1);}
+  else if(e.key==='ArrowUp'){e.preventDefault();cmdHighlight(cIdx-1);}
+  else if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing){const b=cBox.children[cIdx];if(b){e.preventDefault();e.stopImmediatePropagation();b.click();}}
+  else if(e.key==='Escape'){e.preventDefault();e.stopImmediatePropagation();hideCmd();}
 });
 // Trên điện thoại (iPhone/Android), Enter = xuống dòng; gửi bằng nút Gửi. Trên máy tính, Enter = gửi, Shift+Enter = xuống dòng.
 const CHAT_TOUCH=window.matchMedia&&matchMedia('(pointer: coarse)').matches;
