@@ -3,7 +3,8 @@
 // Không gán mặc định application/pdf cho file không rõ loại: làm vậy DOCX bị gửi nhầm thành PDF.
 // Chạy kiểm thử: node --test tests/*.mjs
 (function (root) {
-  const GIOI_HAN_MOI_FILE = 10 * 1024 * 1024; // 10 MB mỗi file
+  const GIOI_HAN_MOI_FILE = 30 * 1024 * 1024; // 30 MB mỗi file
+  const GIOI_HAN_TONG = 60 * 1024 * 1024; // tổng một lượt
   const LOAI_THEO_DUOI = {
     pdf: 'application/pdf',
     docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
@@ -42,10 +43,10 @@
   // Thông báo khi file vượt 10 MB, hoặc '' nếu được.
   function loiCoGioiHan(ten, dungLuong) {
     if (dungLuong <= GIOI_HAN_MOI_FILE) return '';
-    return 'File ' + (ten || '') + ' quá lớn (' + (dungLuong / 1048576).toFixed(1) + ' MB). Tối đa 10 MB mỗi file, Hannah nén hoặc tách file nhé.';
+    return 'File ' + (ten || '') + ' quá lớn (' + (dungLuong / 1048576).toFixed(1) + ' MB). Tối đa 30 MB mỗi file, Hannah nén hoặc tách file nhé.';
   }
 
-  const api = { GIOI_HAN_MOI_FILE, LOAI_THEO_DUOI, loaiFile, loaiDuocGui, loiCoGioiHan };
+  const api = { GIOI_HAN_MOI_FILE, GIOI_HAN_TONG, LOAI_THEO_DUOI, loaiFile, loaiDuocGui, loiCoGioiHan };
   root.LOAI_FILE = api;
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
 })(typeof window !== 'undefined' ? window : globalThis);

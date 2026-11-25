@@ -1767,7 +1767,7 @@ $('chatFile').onchange=async e=>{
   const list=[...(e.target.files||[])];e.target.value='';
   if(!list.length)return;
   const total=list.reduce((n,f)=>n+f.size,0)+pendingFiles.reduce((n,f)=>n+f.data.length*0.75,0);
-  if(total>22*1024*1024){$('chatNote').textContent='Tổng file quá 22MB, Hannah bớt bớt file nhé.';return;}
+  if(total>60*1024*1024){$('chatNote').textContent='Tổng file quá 60MB, Hannah bớt bớt file nhé.';return;}
   for(const f of list){
     const loiGioiHan=LOAI_FILE.loiCoGioiHan(f.name,f.size);
     if(loiGioiHan){$('chatNote').textContent=loiGioiHan;continue;}
@@ -1782,7 +1782,7 @@ document.addEventListener('paste',async e=>{
   if(!fl.length||!chatA||$('chat').hidden||sending)return;
   e.preventDefault();
   const total=fl.reduce((n,f)=>n+f.size,0)+pendingFiles.reduce((n,f)=>n+f.data.length*0.75,0);
-  if(total>22*1024*1024){$('chatNote').textContent='Tổng file quá 22MB, Hannah bớt bớt file nhé.';return;}
+  if(total>60*1024*1024){$('chatNote').textContent='Tổng file quá 60MB, Hannah bớt bớt file nhé.';return;}
   for(const f of fl){
     const named=(f.name&&f.name!=='image.png')?f:new File([f],'anh-chup-'+Date.now()+'.png',{type:f.type});
     pendingFiles.push(await readFile(named));

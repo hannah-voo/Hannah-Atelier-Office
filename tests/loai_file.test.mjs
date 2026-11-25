@@ -1,4 +1,4 @@
-// Kiểm thử suy loại file theo đuôi và giới hạn 10 MB (loai-file.js), dùng cho ô chọn file của chat.
+// Kiểm thử suy loại file theo đuôi và giới hạn 30 MB (loai-file.js), dùng cho ô chọn file của chat.
 // Không gọi mạng. Chạy từ thư mục gốc repo: node --test tests/*.mjs
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -51,11 +51,11 @@ test('loaiDuocGui: nhận PDF, ảnh, CSV, DOCX, PPTX, XLSX; từ chối loại 
   assert.equal(loaiDuocGui('application/msword', 'a.doc'), false);
 });
 
-test('giới hạn 10 MB: file đúng 10 MB được nhận, file vượt thì báo rõ tên và dung lượng', () => {
-  assert.equal(GIOI_HAN_MOI_FILE, 10 * 1024 * 1024);
+test('giới hạn 30 MB: file đúng 30 MB được nhận, file vượt thì báo rõ tên và dung lượng', () => {
+  assert.equal(GIOI_HAN_MOI_FILE, 30 * 1024 * 1024);
   assert.equal(loiCoGioiHan('ok.pdf', GIOI_HAN_MOI_FILE), '');
   const loi = loiCoGioiHan('lon.docx', GIOI_HAN_MOI_FILE + 1);
   assert.ok(loi.includes('lon.docx'));
-  assert.ok(loi.includes('10 MB'));
-  assert.ok(loi.includes('10.0 MB'));
+  assert.ok(loi.includes('30 MB'));
+  assert.ok(loi.includes('30.0 MB'));
 });
