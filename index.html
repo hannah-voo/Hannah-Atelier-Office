@@ -1415,7 +1415,7 @@ tick();setInterval(tick,1000);
 fetch('agents.json',{cache:'no-store'}).then(r=>r.json()).then(d=>{
   state.agents=d.agents||[];state.activity=d.activity||[];state.tasks=d.tasks||[];
   placeRobots();renderStats();renderList();setMode3d(g3d.checked);
-  renderThreads();if(pass)pollThreads();
+  renderThreads();if(pass)pollThreads().catch(()=>{});
 }).catch(()=>{
   $('list').innerHTML='<div class="empty">Không tải được agents.json.</div>';
 });
@@ -1529,11 +1529,20 @@ function playPing(){
     });
   }catch(e){}
 }
+// Polling /history: không chạy khi tab đang ẩn, không gọi chồng khi lượt trước của cùng loại chưa xong.
+// Lỗi (kể cả status 0 hoặc 5xx) thì lùi dần 10s → 20s → 40s … tối đa 120s; thành công thì reset.
+const pollBusy={},pollBack={fails:0,nextAt:0};
+function pollBlocked(){return document.hidden||Date.now()<pollBack.nextAt;}
+function pollRun(name,fn){
+  if(pollBusy[name]||pollBlocked())return;
+  pollBusy[name]=true;
+  Promise.resolve().then(fn).then(()=>{pollBack.fails=0;pollBack.nextAt=0;},()=>{pollBack.fails++;pollBack.nextAt=Date.now()+Math.min(10000*Math.pow(2,pollBack.fails-1),120000);}).finally(()=>{pollBusy[name]=false;});
+}
 async function pollThreads(){
   if(!pass)return;
   await checkInbox();
   const before={};threads.forEach(id=>{before[id]=known[id]||0;});
-  let fresh=false;
+  let fresh=false,loi=false;
   for(const id of threads){
     if(chatA&&id===chatA.id)continue;
     try{
@@ -1547,11 +1556,12 @@ async function pollThreads(){
         toast((a?a.name:'Agent')+' vừa trả lời', snip, id);
       }
       known[id]=n;if(seen[id]===undefined)seen[id]=n;
-    }catch(e){}
+    }catch(e){loi=true;}
   }
   saveThreads();renderThreads();
   if(fresh)playPing();
   pingReady=true;
+  if(loi)throw new Error('polling /history lỗi');
 }
 async function api(path,payload){
   const r=await fetch(WORKER_URL+path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...payload,pass,agent:(payload&&payload.agent)||chatA.id})});
@@ -1664,8 +1674,8 @@ function openChat(a){
   if(!pass){$('chatForm').hidden=true;$('chatNote').textContent='Chưa có mật khẩu. Bấm lại dòng agent để nhập.';return;}
   $('chatForm').hidden=false;
   loadHist().catch(e=>$('chatNote').textContent='Lỗi: '+e.message);
-  chatTimer=setInterval(()=>{if(!sending)loadHist().catch(()=>{})},8000);
-  pollThreads();clearInterval(threadTimer);threadTimer=setInterval(pollThreads,10000);
+  chatTimer=setInterval(()=>{if(!sending)pollRun('chat',loadHist);},8000);
+  pollThreads().catch(()=>{});clearInterval(threadTimer);threadTimer=setInterval(()=>pollRun('threads',pollThreads),30000);
   if(window.innerWidth>640){$('chat').classList.add('big');$('chatBack').classList.add('on');$('chatZoom').textContent='⤡';$('chatZoom').title='Thu nhỏ';}
   fitChat();
   if(window.innerWidth<=640){setTimeout(()=>$('chat').scrollIntoView({behavior:'smooth',block:'start'}),60);}
