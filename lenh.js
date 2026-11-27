@@ -10,6 +10,18 @@
       { ten: '/bao-cao-ads', mo_ta: 'Báo cáo ads theo brand và tháng. Ví dụ: /bao-cao-ads asia-new-vision 11/2026' }
     ]
   };
+  // /doi đổi model tạm thời 24 giờ, áp dụng cho mọi agent (Worker xử lý). Menu liệt kê từng model.
+  const LENH_DOI = [
+    { ten: '/doi gemini', mo_ta: 'Đổi tạm thời sang Gemini trong 24 giờ' },
+    { ten: '/doi haiku', mo_ta: 'Đổi tạm thời sang Claude Haiku 5.5 trong 24 giờ' },
+    { ten: '/doi sonnet', mo_ta: 'Đổi tạm thời sang Claude Sonnet 5.5 trong 24 giờ' },
+    { ten: '/doi deepseek', mo_ta: 'Đổi tạm thời sang DeepSeek trong 24 giờ' }
+  ];
+  // Lệnh riêng của agent, rồi đến các lệnh /doi dùng chung. Không có agent thì không có menu.
+  function danhSachCua(agentId) {
+    if (!agentId) return [];
+    return [...(LENH_THEO_AGENT[agentId] || []), ...LENH_DOI];
+  }
   function khopRoi(ten, q) {
     let i = 0;
     for (const c of ten) { if (i < q.length && c === q[i]) i++; }
@@ -21,7 +33,7 @@
     if (!v.startsWith('/')) return [];
     const q = v.slice(1);
     if (/\s/.test(q)) return [];
-    const ds = LENH_THEO_AGENT[agentId] || [];
+    const ds = danhSachCua(agentId);
     const qs = q.toLowerCase();
     // Khớp đầu từ trước, sau đó khớp rời (các chữ gõ nằm đúng thứ tự trong tên): "/na" khớp "/nhac"
     const ten = (l) => l.ten.slice(1).toLowerCase();
@@ -29,7 +41,7 @@
     const roi = ds.filter((l) => !dau.includes(l) && khopRoi(ten(l), qs));
     return [...dau, ...roi];
   }
-  const api = { LENH_THEO_AGENT, locLenh };
+  const api = { LENH_THEO_AGENT, LENH_DOI, locLenh };
   root.LENH = api;
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
 })(typeof window !== 'undefined' ? window : globalThis);

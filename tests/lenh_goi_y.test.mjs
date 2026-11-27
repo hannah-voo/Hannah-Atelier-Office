@@ -13,8 +13,8 @@ const AI_AGENT = 'bq-08'; // agent AI, không có lệnh trong danh sách
 
 const ten = (ds) => ds.map((l) => l.ten);
 
-test('Sol: gõ "/" hiện đúng một lệnh /nhac', () => {
-  assert.deepEqual(ten(locLenh(SOL, '/')), ['/nhac']);
+test('Sol: gõ "/" hiện /nhac và các lệnh /doi (mọi agent đều có /doi)', () => {
+  assert.deepEqual(ten(locLenh(SOL, '/')), ['/nhac', '/doi gemini', '/doi haiku', '/doi sonnet', '/doi deepseek']);
 });
 
 test('Sol: gõ "/na" lọc còn /nhac (khớp rời, vì /nhac không bắt đầu bằng na); không phân biệt hoa thường', () => {
@@ -23,8 +23,8 @@ test('Sol: gõ "/na" lọc còn /nhac (khớp rời, vì /nhac không bắt đ�
   assert.deepEqual(ten(locLenh(SOL, '/NA')), ['/nhac']);
 });
 
-test('Orbit: gõ "/" hiện /bao-cao-ads, và "/bao" lọc đúng', () => {
-  assert.deepEqual(ten(locLenh(ORBIT, '/')), ['/bao-cao-ads']);
+test('Orbit: gõ "/" hiện /bao-cao-ads và /doi, và "/bao" lọc đúng', () => {
+  assert.deepEqual(ten(locLenh(ORBIT, '/')), ['/bao-cao-ads', '/doi gemini', '/doi haiku', '/doi sonnet', '/doi deepseek']);
   assert.deepEqual(ten(locLenh(ORBIT, '/bao')), ['/bao-cao-ads']);
   assert.deepEqual(ten(locLenh(ORBIT, '/nhac')), []);
 });
@@ -34,9 +34,15 @@ test('mô tả đúng như yêu cầu', () => {
   assert.equal(LENH_THEO_AGENT[ORBIT][0].mo_ta, 'Báo cáo ads theo brand và tháng. Ví dụ: /bao-cao-ads asia-new-vision 11/2026');
 });
 
-test('agent AI (không có lệnh): gõ "/" không hiện menu', () => {
-  assert.deepEqual(locLenh(AI_AGENT, '/'), []);
+test('agent AI không có lệnh riêng: gõ "/" chỉ hiện các lệnh /doi; không có agent thì không hiện menu', () => {
+  assert.deepEqual(ten(locLenh(AI_AGENT, '/')), ['/doi gemini', '/doi haiku', '/doi sonnet', '/doi deepseek']);
   assert.deepEqual(locLenh(undefined, '/'), []);
+});
+
+test('/doi: gõ "/doi" hiện đủ 4 model; đã gõ khoảng trắng thì menu đóng', () => {
+  assert.deepEqual(ten(locLenh(AI_AGENT, '/doi')), ['/doi gemini', '/doi haiku', '/doi sonnet', '/doi deepseek']);
+  assert.deepEqual(locLenh(AI_AGENT, '/doi '), []);
+  assert.deepEqual(locLenh(AI_AGENT, '/doi gemini'), []);
 });
 
 test('"/" giữa câu không bật menu (link, ngày tháng, chữ thường)', () => {
