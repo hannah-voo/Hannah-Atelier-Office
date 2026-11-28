@@ -94,7 +94,7 @@
       "sub": "Điều phối",
       "order": 2,
       "name": "Atlas",
-      "role": "Lập kế hoạch, chia việc và giao cho 6 agent chuyên môn của Bách Quang",
+      "role": "Lập kế hoạch, chia việc và giao cho 7 agent chuyên môn của Bách Quang",
       "greet": "Hannah giao việc cho Bách Quang, em sẽ lập kế hoạch và chia việc.",
       "status": "ready",
       "title": "Team Leader"
@@ -195,7 +195,7 @@
       "sub": "Điều phối",
       "order": 2,
       "name": "Titan",
-      "role": "Lập kế hoạch, chia việc và giao cho 6 agent chuyên môn của Asia New Vision",
+      "role": "Lập kế hoạch, chia việc và giao cho 7 agent chuyên môn của Asia New Vision",
       "greet": "Hannah giao việc cho Asia New Vision, em sẽ lập kế hoạch và chia việc.",
       "status": "ready",
       "title": "Team Leader"
@@ -296,7 +296,7 @@
       "sub": "Điều phối",
       "order": 2,
       "name": "Eli",
-      "role": "Lập kế hoạch, chia việc và giao cho 6 agent chuyên môn của Ember Lens",
+      "role": "Lập kế hoạch, chia việc và giao cho 7 agent chuyên môn của Ember Lens",
       "greet": "Hannah giao việc cho Ember Lens, em sẽ lập kế hoạch và chia việc.",
       "status": "ready",
       "title": "Team Leader"
