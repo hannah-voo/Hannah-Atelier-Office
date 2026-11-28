@@ -15,7 +15,8 @@
     { ten: '/doi gemini', mo_ta: 'Đổi tạm thời sang Gemini trong 24 giờ' },
     { ten: '/doi haiku', mo_ta: 'Đổi tạm thời sang Claude Haiku 5.5 trong 24 giờ' },
     { ten: '/doi sonnet', mo_ta: 'Đổi tạm thời sang Claude Sonnet 5.5 trong 24 giờ' },
-    { ten: '/doi deepseek', mo_ta: 'Đổi tạm thời sang DeepSeek trong 24 giờ' }
+    { ten: '/doi deepseek', mo_ta: 'Đổi tạm thời sang DeepSeek trong 24 giờ' },
+    { ten: '/doi VertexAI', mo_ta: 'Đổi tạm thời sang Gemini qua Vertex (credit Google Cloud) trong 24 giờ, đến 18/02/2027' }
   ];
   // Lệnh riêng của agent, rồi đến các lệnh /doi dùng chung. Không có agent thì không có menu.
   function danhSachCua(agentId) {
