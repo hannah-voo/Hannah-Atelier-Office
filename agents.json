@@ -28,7 +28,7 @@
       "sub": "Điều hành",
       "order": 3,
       "name": "Sol",
-      "role": "Nhắc việc theo lịch (8:00 và 22:00)",
+      "role": "Nhắc việc theo lịch (7:30 và 21:00)",
       "greet": "Hannah muốn em nhắc việc gì, lúc mấy giờ ạ?",
       "status": "ready",
       "title": "Reminder"
